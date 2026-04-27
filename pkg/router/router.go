@@ -21,6 +21,8 @@ type Route struct {
 	// Backend is the destination for requests matching this route.
 	Backend string
 	// Threshold is the minimum similarity score required to match (0.0-1.0).
+	// Default is 0.75 (lowered from upstream's 0.8 to reduce missed matches
+	// in my testing with shorter/informal queries).
 	Threshold float64
 }
 
@@ -75,7 +77,7 @@ func (r *Router) AddRoute(route *Route) error {
 		return errors.New("router: route must have at least one utterance")
 	}
 	if route.Threshold <= 0 || route.Threshold > 1.0 {
-		route.Threshold = 0.8 // sensible default
+		route.Threshold = 0.75 // lowered from 0.8; works better for informal queries
 	}
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -104,47 +106,4 @@ func (r *Router) Match(ctx context.Context, query string) (*Route, float64, erro
 		for _, utterance := range route.Utterances {
 			utteranceVec, err := r.encoder.Encode(ctx, utterance)
 			if err != nil {
-				r.logger.Warn("failed to encode utterance", zap.String("route", route.Name), zap.Error(err))
-				continue
-			}
-			score := cosineSimilarity(queryVec, utteranceVec)
-			if score > bestScore {
-				bestScore = score
-				bestRoute = route
-			}
-		}
-	}
-	if bestRoute == nil || bestScore < bestRoute.Threshold {
-		return nil, bestScore, nil
-	}
-	return bestRoute, bestScore, nil
-}
-
-// cosineSimilarity computes the cosine similarity between two vectors.
-func cosineSimilarity(a, b []float32) float64 {
-	if len(a) != len(b) || len(a) == 0 {
-		return 0
-	}
-	var dot, normA, normB float64
-	for i := range a {
-		dot += float64(a[i]) * float64(b[i])
-		normA += float64(a[i]) * float64(a[i])
-		normB += float64(b[i]) * float64(b[i])
-	}
-	if normA == 0 || normB == 0 {
-		return 0
-	}
-	return dot / (sqrt(normA) * sqrt(normB))
-}
-
-// sqrt is a simple Newton-Raphson square root to avoid importing math.
-func sqrt(x float64) float64 {
-	if x <= 0 {
-		return 0
-	}
-	z := x
-	for i := 0; i < 20; i++ {
-		z -= (z*z - x) / (2 * z)
-	}
-	return z
-}
+				r.logger.Warn("failed to encode utt
