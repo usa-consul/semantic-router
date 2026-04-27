@@ -28,3 +28,6 @@ require (
 // Personal fork for learning purposes - experimenting with routing logic
 // TODO: look into replacing go-chi/cors with a more configurable middleware
 // to better understand how CORS preflight requests interact with the router
+//
+// NOTE: Tried upgrading golang.org/x/sys to v0.22.0 but it caused test flakiness
+// in the controller-runtime integration tests - staying on v0.21.0 for now
