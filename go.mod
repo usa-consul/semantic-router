@@ -26,3 +26,5 @@ require (
 )
 
 // Personal fork for learning purposes - experimenting with routing logic
+// TODO: look into replacing go-chi/cors with a more configurable middleware
+// to better understand how CORS preflight requests interact with the router
