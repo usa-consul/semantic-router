@@ -31,3 +31,7 @@ require (
 //
 // NOTE: Tried upgrading golang.org/x/sys to v0.22.0 but it caused test flakiness
 // in the controller-runtime integration tests - staying on v0.21.0 for now
+//
+// TODO: investigate upgrading sigs.k8s.io/controller-runtime to v0.19.x once
+// the k8s.io/apimachinery dependency catches up - the reconciler loop changes
+// in v0.19 look interesting for understanding how watches are batched
