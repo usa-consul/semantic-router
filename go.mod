@@ -35,3 +35,6 @@ require (
 // TODO: investigate upgrading sigs.k8s.io/controller-runtime to v0.19.x once
 // the k8s.io/apimachinery dependency catches up - the reconciler loop changes
 // in v0.19 look interesting for understanding how watches are batched
+//
+// NOTE: module path intentionally kept as vllm-project to make it easier to
+// track upstream changes and eventually submit patches back upstream
