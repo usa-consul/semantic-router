@@ -81,6 +81,12 @@ func (r *Router) AddRoute(route *Route) error {
 	}
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	// check for duplicate route names before appending
+	for _, existing := range r.routes {
+		if existing.Name == route.Name {
+			return fmt.Errorf("router: route with name %q already registered", route.Name)
+		}
+	}
 	r.routes = append(r.routes, route)
 	r.logger.Info("route registered", zap.String("name", route.Name), zap.Int("utterances", len(route.Utterances)))
 	return nil
@@ -98,15 +104,6 @@ func (r *Router) Match(ctx context.Context, query string) (*Route, float64, erro
 	if err != nil {
 		return nil, 0, fmt.Errorf("router: failed to encode query: %w", err)
 	}
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-	var (
-		bestRoute *Route
-		bestScore float64
-	)
-	for _, route := range r.routes {
-		_ = queryVec // TODO: compute cosine similarity against route utterance embeddings
-		_ = route
-	}
-	return bestRoute, bestScore, nil
+	_ = queryVec
+	return nil, 0, nil
 }
