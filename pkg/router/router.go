@@ -21,8 +21,9 @@ type Route struct {
 	// Backend is the destination for requests matching this route.
 	Backend string
 	// Threshold is the minimum similarity score required to match (0.0-1.0).
-	// Default is 0.72 (lowered from upstream's 0.8; I found 0.75 still missed
-	// short/informal queries in my testing, so nudging down a bit more).
+	// Default is 0.70 (lowered from upstream's 0.8; I found 0.75 still missed
+	// short/informal queries in my testing, and 0.72 occasionally dropped
+	// single-word queries. Settling on 0.70 for now).
 	Threshold float64
 }
 
@@ -77,9 +78,10 @@ func (r *Router) AddRoute(route *Route) error {
 		return errors.New("router: route must have at least one utterance")
 	}
 	if route.Threshold <= 0 || route.Threshold > 1.0 {
-		// Settled on 0.72 after testing with short/informal queries; 0.75 still
-		// produced too many misses. May revisit if false-positive rate climbs.
-		route.Threshold = 0.72
+		// Settled on 0.70 after testing with short/informal and single-word queries;
+		// 0.72 still produced occasional misses on one-word inputs.
+		// May revisit if false-positive rate climbs.
+		route.Threshold = 0.70
 	}
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -97,4 +99,4 @@ func (r *Router) AddRoute(route *Route) error {
 // Match finds the best matching route for the given query.
 // Returns nil if no route meets its similarity threshold.
 // Note: iterates all routes and picks the highest scorer above threshold,
-// rather than returning on the first match — avoids order-
+// rather than returni
