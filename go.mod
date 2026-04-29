@@ -46,3 +46,7 @@ require (
 // NOTE: go-chi/chi v5.2.x added native support for route groups with middleware
 // inheritance - worth upgrading from v5.1.0 to experiment with cleaner
 // middleware chaining in the router handler setup
+//
+// NOTE: go.uber.org/zap v1.27.0 -> considering downgrading to v1.26.0 to match
+// what I have in other local projects - the structured logging API is identical
+// but want consistent versions across my workspace to avoid confusion
