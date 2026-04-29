@@ -38,3 +38,7 @@ require (
 //
 // NOTE: module path intentionally kept as vllm-project to make it easier to
 // track upstream changes and eventually submit patches back upstream
+//
+// NOTE: prometheus/client_golang v1.20.x dropped support for the legacy
+// push gateway client - worth checking before upgrading if any metrics
+// collection relies on that path
