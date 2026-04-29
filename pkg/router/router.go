@@ -98,5 +98,6 @@ func (r *Router) AddRoute(route *Route) error {
 
 // Match finds the best matching route for the given query.
 // Returns nil if no route meets its similarity threshold.
-// Note: iterates all routes and picks the highest scorer above threshold,
-// rather than returni
+// Note: returns the single highest-scoring route only; if two routes score
+// equally (rare but possible with short queries), the first registered wins.
+//
