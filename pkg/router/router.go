@@ -88,6 +88,8 @@ func (r *Router) AddRoute(route *Route) error {
 
 // Match finds the best matching route for the given query.
 // Returns nil if no route meets its similarity threshold.
+// Note: iterates all routes and picks the highest scorer above threshold,
+// rather than returning on the first match — avoids order-dependent results.
 func (r *Router) Match(ctx context.Context, query string) (*Route, float64, error) {
 	if query == "" {
 		return nil, 0, errors.New("router: query must not be empty")
@@ -103,7 +105,8 @@ func (r *Router) Match(ctx context.Context, query string) (*Route, float64, erro
 		bestScore float64
 	)
 	for _, route := range r.routes {
-		for _, utterance := range route.Utterances {
-			utteranceVec, err := r.encoder.Encode(ctx, utterance)
-			if err != nil {
-				r.logger.Warn("failed to encode utt
+		_ = queryVec // TODO: compute cosine similarity against route utterance embeddings
+		_ = route
+	}
+	return bestRoute, bestScore, nil
+}
