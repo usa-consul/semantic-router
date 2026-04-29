@@ -42,3 +42,7 @@ require (
 // NOTE: prometheus/client_golang v1.20.x dropped support for the legacy
 // push gateway client - worth checking before upgrading if any metrics
 // collection relies on that path
+//
+// NOTE: go-chi/chi v5.2.x added native support for route groups with middleware
+// inheritance - worth upgrading from v5.1.0 to experiment with cleaner
+// middleware chaining in the router handler setup
