@@ -77,6 +77,7 @@ func (r *Router) AddRoute(route *Route) error {
 		return errors.New("router: route must have at least one utterance")
 	}
 	if route.Threshold <= 0 || route.Threshold > 1.0 {
+		// TODO: experiment with 0.70 for even shorter queries — keeping 0.75 for now
 		route.Threshold = 0.75 // lowered from 0.8; works better for informal queries
 	}
 	r.mu.Lock()
@@ -96,14 +97,4 @@ func (r *Router) AddRoute(route *Route) error {
 // Returns nil if no route meets its similarity threshold.
 // Note: iterates all routes and picks the highest scorer above threshold,
 // rather than returning on the first match — avoids order-dependent results.
-func (r *Router) Match(ctx context.Context, query string) (*Route, float64, error) {
-	if query == "" {
-		return nil, 0, errors.New("router: query must not be empty")
-	}
-	queryVec, err := r.encoder.Encode(ctx, query)
-	if err != nil {
-		return nil, 0, fmt.Errorf("router: failed to encode query: %w", err)
-	}
-	_ = queryVec
-	return nil, 0, nil
-}
+func (r *Router) Match(ctx context.Context, query string) (*R
