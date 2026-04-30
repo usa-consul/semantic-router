@@ -50,6 +50,8 @@ func (m *RouteMatch) Matched() bool {
 
 // NewRoute creates a new Route with the given name and utterances.
 // Returns an error if the name is empty or no utterances are provided.
+// Note: utterance deduplication is not performed here; duplicates are kept
+// intentionally so callers can weight certain phrases by repeating them.
 func NewRoute(name string, utterances []string, opts ...RouteOption) (*Route, error) {
 	name = strings.TrimSpace(name)
 	if name == "" {
@@ -96,11 +98,4 @@ func WithDescription(desc string) RouteOption {
 
 // WithMetadata attaches arbitrary metadata to the route.
 // If the route's Metadata map is nil, it is initialized before setting the value.
-func WithMetadata(key string, value any) RouteOption {
-	return func(r *Route) {
-		if r.Metadata == nil {
-			r.Metadata = make(map[string]any)
-		}
-		r.Metadata[key] = value
-	}
-}
+func WithM
