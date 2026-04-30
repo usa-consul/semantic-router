@@ -96,8 +96,24 @@ func (r *Router) AddRoute(route *Route) error {
 	return nil
 }
 
+// RemoveRoute unregisters a route by name.
+// Returns an error if no route with the given name exists.
+func (r *Router) RemoveRoute(name string) error {
+	if name == "" {
+		return errors.New("router: route name must not be empty")
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for i, existing := range r.routes {
+		if existing.Name == name {
+			r.routes = append(r.routes[:i], r.routes[i+1:]...)
+			r.logger.Info("route removed", zap.String("name", name))
+			return nil
+		}
+	}
+	return fmt.Errorf("router: no route with name %q found", name)
+}
+
 // Match finds the best matching route for the given query.
 // Returns nil if no route meets its similarity threshold.
-// Note: returns the single highest-scoring route only; if two routes score
-// equally (rare but possible with short queries), the first registered wins.
 //
