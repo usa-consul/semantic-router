@@ -95,19 +95,12 @@ func WithDescription(desc string) RouteOption {
 }
 
 // WithMetadata attaches arbitrary metadata to the route.
+// If the route's Metadata map is nil, it is initialized before setting the value.
 func WithMetadata(key string, value any) RouteOption {
 	return func(r *Route) {
 		if r.Metadata == nil {
 			r.Metadata = make(map[string]any)
 		}
 		r.Metadata[key] = value
-	}
-}
-
-// WithScoreThreshold sets a route-specific similarity score threshold,
-// overriding the router-level default for this route only.
-func WithScoreThreshold(threshold float64) RouteOption {
-	return func(r *Route) {
-		r.ScoreThreshold = threshold
 	}
 }
